@@ -18,9 +18,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Azure CLI
+      # Step 2: Set up Azure CLI using the azure/cli-action
       - name: Set up Azure CLI
-        uses: azure/setup-azurecli@v1
+        uses: azure/cli-action@v1
 
       # Step 3: Login to Azure using the App Registration credentials
       - name: Login to Azure
