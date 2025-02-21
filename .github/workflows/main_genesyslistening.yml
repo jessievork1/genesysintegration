@@ -18,9 +18,11 @@ jobs:
       - name: Upload static frontend files
         run: |
           echo "Preparing static files for deployment"
-          # This assumes your static files (HTML, JS, CSS) are in the root folder or public directory
+          # Copying your static files (index.html, script.js, styles.css) into the 'dist' folder
           mkdir -p ./dist
-          cp -r ./path-to-your-static-files/* ./dist/
+          cp -r ./index.html ./dist/
+          cp -r ./script.js ./dist/
+          cp -r ./styles.css ./dist/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
