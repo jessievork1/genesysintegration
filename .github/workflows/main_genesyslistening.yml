@@ -14,13 +14,27 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
-      - uses: actions/checkout@v4  # Checkout your repo
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: 'Deploy to Azure Web App'
+      # Step 2: Set up Azure CLI
+      - name: Set up Azure CLI
+        uses: azure/setup-azurecli@v1
+
+      # Step 3: Login to Azure using the App Registration credentials
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+
+      # Step 4: Deploy to Azure Web App
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
           app-name: 'GenesysListening'  # Replace with your Azure Web App name
           slot-name: 'Production'
           package: ./  # Deploy the root of your repo (static files)
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}  # Make sure you have the publish profile secret in GitHub
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}  # If you're using the publish profile secret, include it here
