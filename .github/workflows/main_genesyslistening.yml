@@ -14,19 +14,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Azure CLI
-      - name: Set up Azure CLI
-        uses: azure/setup-azurecli@v1
-
-      # Step 3: Log in to Azure using the App Registration credentials
-      - name: Azure CLI login
+      # Step 2: Log in to Azure using App Registration credentials
+      - name: Azure login
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 
-      # Step 4: Deploy the static files to Azure Web App
+      # Step 3: Deploy to Azure Web App
       - name: Deploy to Azure Web App
-        run: |
-          az webapp deploy --resource-group <your-resource-group> --name GenesysListening --src-path . --type static
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'GenesysListening'  # Your Azure Web App name
+          slot-name: 'Production'  # You can change to a different slot if needed
+          package: .  # Path to the directory you want to deploy (root of the repo)
