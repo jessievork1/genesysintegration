@@ -1,40 +1,32 @@
-name: Build and deploy Node.js app to Azure Web App - GenesysListening
+name: Deploy static files to Azure Web App - GenesysListening
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main  # Trigger deployment on push to the 'main' branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Azure CLI using the azure/cli-action
+      # Step 2: Set up Azure CLI
       - name: Set up Azure CLI
-        uses: azure/cli-action@v1
+        uses: azure/setup-azurecli@v1
 
-      # Step 3: Login to Azure using the App Registration credentials
-      - name: Login to Azure
+      # Step 3: Log in to Azure using the App Registration credentials
+      - name: Azure CLI login
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 
-      # Step 4: Deploy to Azure Web App
+      # Step 4: Deploy the static files to Azure Web App
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'GenesysListening'  # Replace with your Azure Web App name
-          slot-name: 'Production'
-          package: ./  # Deploy the root of your repo (static files)
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}  # If you're using the publish profile secret, include it here
+        run: |
+          az webapp deploy --resource-group <your-resource-group> --name GenesysListening --src-path . --type static
